@@ -1,0 +1,448 @@
+{% extends "navbar.html" %}
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="rujiba" />
+    <meta name="author" content="credits by kelvin" />
+    <title>Dashboard Rujiba</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+</head>
+<body class="sb-nav-fixed">
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="card">
+                <div class="container-fluid px-4" style="height: 100vh; overflow-y: auto;">
+                    <h1 class="mt-4">REKAPULASI BULANAN</h1>
+                    <ol class="breadcrumb mb-4">
+                        <li class="breadcrumb-item">Admin / <span>Apulasan</span></li>
+                    </ol>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="mb-1">
+                                <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#importModal">Import Excel</button>
+                                <button type="button" class="btn btn-primary btnaddrekap" data-bs-toggle="modal" data-bs-target="#addRekapModal">Add Rekapulasi</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table id="jurnalTable" class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th scope="col">No</th>
+                                        <th scope="col">NIP</th>
+                                        <th scope="col">NAMA</th>
+                                        <th scope="col">ID Regu</th>
+                                        <th scope="col">UNIT KERJA</th>
+                                        <th scope="col">TERLAMBAT</th>
+                                        <th scope="col">PULANG CEPAT</th>
+                                        <th scope="col">TERLAMBAT(Menit)</th>
+                                        <th scope="col">PULANG CEPAT(Menit)</th>
+                                        <th scope="col">TANPA KETERANGAN</th>
+                                        <th scope="col">TERLAMBAT(IZIN)</th>
+                                        <th scope="col">PULANG CEPAT(IZIN)</th>
+                                        <th scope="col">LUPA ABSEN MASUK</th>
+                                        <th scope="col">LUPA ABSEN PULANG</th>
+                                        <th scope="col">FULL</th>
+                                        <th scope="col">HALF</th>
+                                        <th scope="col">TOTAL</th>
+                                        <th scope="col">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for rekap in rekap %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ rekap.nip }}</td>
+                                        <td>{{ rekap.nama }}</td>
+                                        <td>{{ rekap.id_regu }}</td>
+                                        <td>{{ rekap.unit_kerja }}</td>
+                                        <td>{{ rekap.terlambat }}</td>
+                                        <td>{{ rekap.pulang_cepat }}</td>
+                                        <td>{{ rekap.terlambat_menit }}</td>
+                                        <td>{{ rekap.pulang_cepat_menit }}</td>
+                                        <td>{{ rekap.tanpa_keterangan }}</td>
+                                        <td>{{ rekap.terlambat_izin }}</td>
+                                        <td>{{ rekap.pulang_cepat_izin }}</td>
+                                        <td>{{ rekap.lupa_absen_masuk }}</td>
+                                        <td>{{ rekap.lupa_absen_pulang }}</td>
+                                        <td>{{ rekap.full }}</td>
+                                        <td>{{ rekap.half }}</td>
+                                        <td>{{ rekap.total }}</td>
+                                        <td>
+                                            <a class="btn btn-primary edit-rekap" data-id="{{ rekap.id }}" data-bs-toggle="modal" data-bs-target="#editRekapModal">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a class="btn btn-danger delete-rekap" data-id="{{ rekap.id }}">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>            
+                </div> 
+            </div>   
+        </div>        
+    </main>
+</div>
+
+
+<!-- Modal Import Excel -->
+<div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importModalLabel">Import Excel</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="importJurnalForm" action="" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="excelFile" class="form-label">Pilih File Excel (.xlsx, .xls, .csv, .xlsm)</label>
+                        <input type="file" name="file" class="form-control" id="excelFile" accept=".xlsx, .xls, .csv, .xlsm" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="importJurnalBtn">Import</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Add Rekapulasi -->
+<div class="modal fade" id="addRekapModal" tabindex="-1" aria-labelledby="addRekapModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addRekapModalLabel">
+                    <i class="bi bi-plus-circle-fill"></i> Add Rekapulasi
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addRekapForm" action="{% url 'add_rekap' %}" method="POST" novalidate>
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="nip" class="form-label">
+                                <i class="bi bi-card-text"></i> NIP
+                            </label>
+                            <input type="text" class="form-control" id="nip" name="nip" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nama" class="form-label">
+                                <i class="bi bi-person-fill"></i> Nama
+                            </label>
+                            <input type="text" class="form-control" id="nama" name="nama" required>
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-6">
+                            <label for="unit_kerja" class="form-label">
+                                <i class="bi bi-building"></i> Unit Kerja
+                            </label>
+                            <input type="text" class="form-control" id="unit_kerja" name="unit_kerja" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_regu">Select Regu</label>
+                            <select class="form-control" id="id_regu" name="id_regu" required>
+                                
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-3">
+                            <label for="terlambat" class="form-label">
+                                <i class="bi bi-clock-fill"></i> Terlambat (Hari)
+                            </label>
+                            <input type="number" class="form-control" id="terlambat" name="terlambat" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="pulang_cepat" class="form-label">
+                                <i class="bi bi-door-open"></i> Pulang Cepat (Hari)
+                            </label>
+                            <input type="number" class="form-control" id="pulang_cepat" name="pulang_cepat" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="terlambat_menit" class="form-label">
+                                <i class="bi bi-hourglass-split"></i> Terlambat (Menit)
+                            </label>
+                            <input type="number" class="form-control" id="terlambat_menit" name="terlambat_menit" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="pulang_cepat_menit" class="form-label">
+                                <i class="bi bi-hourglass-bottom"></i> Pulang Cepat (Menit)
+                            </label>
+                            <input type="number" class="form-control" id="pulang_cepat_menit" name="pulang_cepat_menit" required>
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-3">
+                            <label for="tanpa_keterangan" class="form-label">
+                                <i class="bi bi-file-earmark-exclamation"></i> Tanpa Keterangan
+                            </label>
+                            <input type="number" class="form-control" id="tanpa_keterangan" name="tanpa_keterangan" required min="0"
+                                   data-bs-toggle="tooltip" data-bs-placement="right" title="Jumlah hari tanpa keterangan.">
+                            <div class="invalid-feedback">
+                                Harap masukkan jumlah hari tanpa keterangan.
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="terlambat_izin" class="form-label">
+                                <i class="bi bi-exclamation-triangle"></i> Terlambat (Izin)
+                            </label>
+                            <input type="number" class="form-control" id="terlambat_izin" name="terlambat_izin" required min="0"
+                                   data-bs-toggle="tooltip" data-bs-placement="right" title="Jumlah hari terlambat dengan izin.">
+                            <div class="invalid-feedback">
+                                Harap masukkan jumlah hari terlambat dengan izin.
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="pulang_cepat_izin" class="form-label">
+                                <i class="bi bi-hourglass-split"></i> Pulang Cepat (Izin)
+                            </label>
+                            <input type="number" class="form-control" id="pulang_cepat_izin" name="pulang_cepat_izin" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="lupa_absen_masuk" class="form-label">
+                                <i class="bi bi-box-arrow-in-left"></i> Lupa Absen Masuk
+                            </label>
+                            <input type="number" class="form-control" id="lupa_absen_masuk" name="lupa_absen_masuk" required>
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-3">
+                            <label for="lupa_absen_pulang" class="form-label">
+                                <i class="bi bi-box-arrow-right"></i> Lupa Absen Pulang
+                            </label>
+                            <input type="number" class="form-control" id="lupa_absen_pulang" name="lupa_absen_pulang" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="full" class="form-label">
+                                <i class="bi bi-check-circle-fill"></i> Full
+                            </label>
+                            <input type="number" class="form-control" id="full" name="full" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="half" class="form-label">
+                                <i class="bi bi-check2-circle"></i> Half
+                            </label>
+                            <input type="number" class="form-control" id="half" name="half" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="total" class="form-label">
+                                <i class="bi bi-calculator"></i> Total
+                            </label>
+                            <input type="number" class="form-control" id="total" name="total" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle"></i> Close
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Add Rekapulasi
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Edit Rekapulasi -->
+<div class="modal fade" id="editRekapModal" tabindex="-1" aria-labelledby="editRekapModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editRekapModalLabel">
+                    <i class="bi bi-pencil-fill"></i> Edit Rekapulasi
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editRekapForm" action="/update_rekap/" method="POST" novalidate>
+                    {% csrf_token %}
+                    <!-- <input type="hidden" id="edit_rekap_id" name="edit_rekap_id"> -->
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="edit_nip" class="form-label">
+                                <i class="bi bi-card-text"></i> NIP
+                            </label>
+                            <input type="text" class="form-control" id="edit_nip" name="nip" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_nama" class="form-label">
+                                <i class="bi bi-person-fill"></i> Nama
+                            </label>
+                            <input type="text" class="form-control" id="edit_nama" name="nama" required>
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-6">
+                            <label for="edit_unit_kerja" class="form-label">
+                                <i class="bi bi-building"></i> Unit Kerja
+                            </label>
+                            <input type="text" class="form-control" id="edit_unit_kerja" name="unit_kerja" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_id_regu">Select Regu</label>
+                            <select class="form-control" id="edit_id_regu" name="id_regu" required>
+                                <option disabled selected>Select Regu</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-3">
+                            <label for="edit_terlambat" class="form-label">
+                                <i class="bi bi-clock-fill"></i> Terlambat (Hari)
+                            </label>
+                            <input type="number" class="form-control" id="edit_terlambat" name="terlambat" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="edit_pulang_cepat" class="form-label">
+                                <i class="bi bi-door-open"></i> Pulang Cepat (Hari)
+                            </label>
+                            <input type="number" class="form-control" id="edit_pulang_cepat" name="pulang_cepat" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="edit_terlambat_menit" class="form-label">
+                                <i class="bi bi-hourglass-split"></i> Terlambat (Menit)
+                            </label>
+                            <input type="number" class="form-control" id="edit_terlambat_menit" name="terlambat_menit" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="edit_pulang_cepat_menit" class="form-label">
+                                <i class="bi bi-hourglass-bottom"></i> Pulang Cepat (Menit)
+                            </label>
+                            <input type="number" class="form-control" id="edit_pulang_cepat_menit" name="pulang_cepat_menit" required>
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-3">
+                            <label for="edit_tanpa_keterangan" class="form-label">
+                                <i class="bi bi-file-earmark-exclamation"></i> Tanpa Keterangan
+                            </label>
+                            <input type="number" class="form-control" id="edit_tanpa_keterangan" name="tanpa_keterangan" required min="0"
+                                   data-bs-toggle="tooltip" data-bs-placement="right" title="Jumlah hari tanpa keterangan.">
+                            <div class="invalid-feedback">
+                                Harap masukkan jumlah hari tanpa keterangan.
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="edit_terlambat_izin" class="form-label">
+                                <i class="bi bi-exclamation-triangle"></i> Terlambat (Izin)
+                            </label>
+                            <input type="number" class="form-control" id="edit_terlambat_izin" name="terlambat_izin" required min="0"
+                                   data-bs-toggle="tooltip" data-bs-placement="right" title="Jumlah hari terlambat dengan izin.">
+                            <div class="invalid-feedback">
+                                Harap masukkan jumlah hari terlambat dengan izin.
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="edit_pulang_cepat_izin" class="form-label">
+                                <i class="bi bi-hourglass-split"></i> Pulang Cepat (Izin)
+                            </label>
+                            <input type="number" class="form-control" id="edit_pulang_cepat_izin" name="pulang_cepat_izin" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="edit_lupa_absen_masuk" class="form-label">
+                                <i class="bi bi-box-arrow-in-left"></i> Lupa Absen Masuk
+                            </label>
+                            <input type="number" class="form-control" id="edit_lupa_absen_masuk" name="lupa_absen_masuk" required>
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-3">
+                            <label for="edit_lupa_absen_pulang" class="form-label">
+                                <i class="bi bi-box-arrow-right"></i> Lupa Absen Pulang
+                            </label>
+                            <input type="number" class="form-control" id="edit_lupa_absen_pulang" name="lupa_absen_pulang" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="edit_full" class="form-label">
+                                <i class="bi bi-check-circle-fill"></i> Full
+                            </label>
+                            <input type="number" class="form-control" id="edit_full" name="full" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="edit_half" class="form-label">
+                                <i class="bi bi-check2-circle"></i> Half
+                            </label>
+                            <input type="number" class="form-control" id="edit_half" name="half" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="edit_total" class="form-label">
+                                <i class="bi bi-calculator"></i> Total
+                            </label>
+                            <input type="number" class="form-control" id="edit_total" name="total" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle"></i> Close
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- jQuery Modal -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script> -->
+<script src="{% static 'js/jquery.min.js' %}"></script>
+
+<!-- Static File -->
+<script src="{% static 'js/jqueryrekap.js' %}"></script>
+<script src="{% static 'js/get2.js' %}"></script>
+<!-- Bootstrap JS -->
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<!-- jQuery -->
+<script src="{% static 'js/jquerycdn.js' %}"></script>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<!-- Sweet Alert -->
+<script src="{% static 'js/sweetalert2.js' %}"></script>
+<!-- DataTables JS -->
+<script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'js/dataTables.bootstrap5.min.js' %}"></script>
+<!-- DataTabels JS Customize -->
+<script src="{% static 'js/dataTables.bootstrap5.min.js' %}"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#jurnalTable').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "pageLength": 5,
+            "responsive": true
+        });
+    });
+</script>
+
+</body>
+</html>
+{% endblock content %}

@@ -1,0 +1,335 @@
+{% extends "navbar.html" %}
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="rujiba" />
+    <meta name="author" content="credits by kelvin" />
+    <title>Dashboard Rujiba</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+</head>
+<body class="sb-nav-fixed">
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="card">
+                <div class="container-fluid px-4">
+                    <h1 class="mt-4">JURNAL HARIAN</h1>
+                    <ol class="breadcrumb mb-4">
+                        <li class="breadcrumb-item">Admin / <span>Apulasan</span></li>
+                    </ol>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="mb-1">
+                                <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#importModal">Import Excel</button>
+                                <button id="btnaddjurnal" type="button" class="btn btn-primary btnaddjurnal" data-bs-toggle="modal" data-bs-target="#addJurnalModal">Add Jurnal</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table id="jurnalTable" class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th scope="col">No</th>
+                                        <th scope="col">Tanggal</th>
+                                        <th scope="col">ID Regu</th>
+                                        <th scope="col">SKP Tahunan</th>
+                                        <th scope="col">Jurnal Harian</th>
+                                        <th scope="col">Jumlah</th>
+                                        <th scope="col">Satuan</th>
+                                        <th scope="col">Jam Mulai</th>
+                                        <th scope="col">Jam Selesai</th>
+                                        <th scope="col">Lampiran</th>
+                                        <th scope="col">Nilai</th>
+                                        <th scope="col">Komentar</th>
+                                        <th scope="col">Tanggal Isi</th>
+                                        <th scope="col">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for jurnal in jurnals %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ jurnal.tanggal }}</td>
+                                        <td>{{ jurnal.id_regu }}</td>
+                                        <td>{{ jurnal.skp_tahunan }}</td>
+                                        <td>{{ jurnal.jurnal_harian }}</td>
+                                        <td>{{ jurnal.jumlah }}</td>
+                                        <td>{{ jurnal.satuan }}</td>
+                                        <td>{{ jurnal.jam_mulai }}</td>
+                                        <td>{{ jurnal.jam_selesai }}</td>
+                                        <td>
+                                            {% if jurnal.lampiran %}
+                                            <a href="{{ jurnal.lampiran.url }}" target="_blank" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-eye"></i> View
+                                            </a>
+                                            {% else %}
+                                            <p>Tidak ada lampiran</p>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ jurnal.nilai }}</td>
+                                        <td>{{ jurnal.komentar }}</td>
+                                        <td>{{ jurnal.tanggal_isi }}</td>
+                                        <td>
+                                            <a class="btn btn-primary edit-jurnal" data-id="{{ jurnal.id }}" data-bs-toggle="modal" data-bs-target="#editJurnalModal">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a class="btn btn-danger delete-jurnal" data-id="{{ jurnal.id }}">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>            
+                </div> 
+            </div>   
+        </div>        
+    </main>
+</div>
+
+<!-- Modal Import Excel -->
+<div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importModalLabel">Import Excel</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="importJurnalForm" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="excelFile" class="form-label">Pilih File Excel (.xlsx, .xls, .csv, .xlsm)</label>
+                        <input type="file" name="file" class="form-control" id="excelFile" accept=".xlsx, .xls, .csv, .xlsm">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="importJurnalBtn">Import</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Add Jurnal -->
+<div class="modal fade" id="addJurnalModal" tabindex="-1" aria-labelledby="addJurnalModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">  
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addJurnalModalLabel">Add Jurnal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="addJurnalForm" method="POST" action="{% url 'add_jurnal' %}" enctype="multipart/form-data">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="tanggal" class="form-label">Tanggal:</label>
+                            <input type="date" class="form-control" id="tanggal" name="tanggal" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="skp_tahunan" class="form-label">SKP Tahunan:</label>
+                            <input type="text" class="form-control" id="skp_tahunan" name="skp_tahunan" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="id_regu">Select Regu</label>
+                            <select class="form-control" id="id_regu" name="id_regu" required>
+                                <option disabled selected>Select Regu</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="jurnal_harian" class="form-label">Jurnal Harian:</label>
+                            <input type="text" class="form-control" id="jurnal_harian" name="jurnal_harian" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="jumlah" class="form-label">Jumlah:</label>
+                            <input type="number" class="form-control" id="jumlah" name="jumlah" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="satuan" class="form-label">Satuan:</label>
+                            <input type="text" class="form-control" id="satuan" name="satuan" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="jam_mulai" class="form-label">Jam Mulai:</label>
+                            <input type="time" class="form-control" id="jam_mulai" name="jam_mulai" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="jam_selesai" class="form-label">Jam Selesai:</label>
+                            <input type="time" class="form-control" id="jam_selesai" name="jam_selesai" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="lampiran" class="form-label">Lampiran:</label>
+                            <input type="file" class="form-control" id="lampiran" name="lampiran" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nilai" class="form-label">Nilai:</label>
+                            <input type="number" class="form-control" id="nilai" name="nilai" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="komentar" class="form-label">Komentar:</label>
+                            <textarea class="form-control" id="komentar" name="komentar" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="tanggal_isi" class="form-label">Tanggal Isi:</label>
+                            <input type="date" class="form-control" id="tanggal_isi" name="tanggal_isi" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="addJurnalBtn">Add Jurnal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Edit Jurnal -->
+<div class="modal fade" id="editJurnalModal" tabindex="-1" aria-labelledby="editJurnalModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editJurnalModalLabel">Edit Jurnal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editJurnalForm" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="edit_tanggal" class="form-label">Tanggal:</label>
+                            <input type="date" class="form-control" id="edit_tanggal" name="tanggal" required value="{{ jurnal.tanggal }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_skp_tahunan" class="form-label">SKP Tahunan:</label>
+                            <input type="text" class="form-control" id="edit_skp_tahunan" name="skp_tahunan" required value="{{ jurnal.skp_tahunan }}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="edit_id_regu">Select Regu</label>
+                            <select class="form-control" id="edit_id_regu" name="id_regu" required>
+                                <option disabled selected>Select Regu</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_jurnal_harian" class="form-label">Jurnal Harian:</label>
+                            <input type="text" class="form-control" id="edit_jurnal_harian" name="jurnal_harian" required value="{{ jurnal.jurnal_harian }}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="edit_jumlah" class="form-label">Jumlah:</label>
+                            <input type="number" class="form-control" id="edit_jumlah" name="jumlah" required value="{{ jurnal.jumlah }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_satuan" class="form-label">Satuan:</label>
+                            <input type="text" class="form-control" id="edit_satuan" name="satuan" required value="{{ jurnal.satuan }}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="edit_jam_mulai" class="form-label">Jam Mulai:</label>
+                            <input type="time" class="form-control" id="edit_jam_mulai" name="jam_mulai" required value="{{ jurnal.jam_mulai }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_jam_selesai" class="form-label">Jam Selesai:</label>
+                            <input type="time" class="form-control" id="edit_jam_selesai" name="jam_selesai" required value="{{ jurnal.jam_selesai }}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="edit_lampiran" class="form-label">Lampiran:</label>
+                            <input type="file" class="form-control" id="edit_lampiran" name="lampiran">
+                            {% if jurnal.lampiran %}
+                                <a href="{{ jurnal.lampiran.url }}" target="_blank">Lampiran saat ini</a>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_nilai" class="form-label">Nilai:</label>
+                            <input type="number" class="form-control" id="edit_nilai" name="nilai" required value="{{ jurnal.nilai }}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="edit_komentar" class="form-label">Komentar:</label>
+                            <textarea class="form-control" id="edit_komentar" name="komentar" rows="3">{{ jurnal.komentar }}</textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="edit_tanggal_isi" class="form-label">Tanggal Isi:</label>
+                            <input type="date" class="form-control" id="edit_tanggal_isi" name="tanggal_isi" required value="{{ jurnal.tanggal_isi }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery Modal -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script> -->
+<script src="{% static 'js/jquery.min.js' %}"></script>
+
+<!-- Static File -->
+<script src="{% static 'js/jquery.js' %}"></script>
+<script src="{% static 'js/get.js' %}"></script>
+<!-- Bootstrap JS -->
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<!-- jQuery -->
+<script src="{% static 'js/jquerycdn.js' %}"></script>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<!-- Sweet Alert -->
+<script src="{% static 'js/sweetalert2.js' %}"></script>
+<!-- DataTables JS -->
+<script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'js/dataTables.bootstrap5.min.js' %}"></script>
+<!-- DataTabels JS Customize -->
+<script src="{% static 'js/dataTables.bootstrap5.min.js' %}"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#jurnalTable').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "pageLength": 5 
+        });
+    });
+</script>
+
+</body>
+</html>
+{% endblock content %}

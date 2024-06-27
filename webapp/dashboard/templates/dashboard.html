@@ -1,0 +1,120 @@
+{% extends "navbar.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="rujiba" />
+    <meta name="author" content="credits by kelvin" />
+    <title>Dashboard Rujiba</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body class="sb-nav-fixed">
+  {% block content %}
+    <div id="layoutSidenav_content">
+      <main>
+        <div class="container-fluid px-4">
+          <h1 class="mt-4">DASHBOARD</h1>
+          <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item active">Admin</li>
+          </ol>
+
+          <!-- Row to contain both tables -->
+          <div class="row">
+            <!-- Top Security Officers Table -->
+            <div class="col-md-8">
+              <div class="card mb-4">
+                <div class="card-header">
+                  <i class="fas fa-trophy"></i>
+                  Top Security Officers
+                </div>
+                <div class="card-body">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">Rank</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Score</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row">1</th>
+                        <td>John Doe</td>
+                        <td>98</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">2</th>
+                        <td>Jane Smith</td>
+                        <td>95</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">3</th>
+                        <td>Emily Johnson</td>
+                        <td>93</td>
+                      </tr>
+                      <!-- Add more rows as needed -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Count of Top 3 Officers -->
+            <div class="col-md-4">
+              <div class="card mb-4">
+                <div class="card-header">
+                  <i class="fas fa-chart-bar"></i>
+                  Top Security Officers Count
+                </div>
+                <div class="card-body text-center">
+                  <h2 class="display-4">3</h2>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Security Officers Table Section -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <i class="fas fa-users"></i>
+              Security Officers List
+            </div>
+            <div class="card-body">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Position</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>John Doe</td>
+                    <td>Chief Security Officer</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>Jane Smith</td>
+                    <td>Senior Security Officer</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>Emily Johnson</td>
+                    <td>Security Officer</td>
+                  </tr>
+                  <!-- Add more rows as needed -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+        </div>
+      </main>
+    </div>
+  {% endblock content %}
+</body>
+</html>
