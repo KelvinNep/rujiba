@@ -28,6 +28,7 @@ def edit_jurnal(request, id):
     jurnal = get_object_or_404(Jurnal, id=id)
     jurnal_data = {
         'id': jurnal.id,
+        'nama': jurnal.nama,
         'tanggal': jurnal.tanggal,
         'skp_tahunan': jurnal.skp_tahunan,
         'id_regu': jurnal.id_regu,

@@ -1,4 +1,5 @@
 {% extends "navbar.html" %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,101 +21,164 @@
             <li class="breadcrumb-item active">Admin</li>
           </ol>
 
-          <!-- Row to contain both tables -->
-          <div class="row">
-            <!-- Top Security Officers Table -->
-            <div class="col-md-8">
-              <div class="card mb-4">
+          <!-- Row for Generate Button, Period Dropdown, and Year Dropdown -->
+          <div class="row mb-4">
+            <div class="col-md-2">
+              <button class="btn btn-primary" onclick="generateReport()">Generate Periode</button>
+            </div>
+            <div class="col-md-4">
+              <select class="form-control" id="periodDropdown">
+                <option value="Q1">Q1</option>
+                <option value="Q2">Q2</option>
+                <option value="Q3">Q3</option>
+                <option value="Q4">Q4</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <select class="form-control" id="yearDropdown">
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-success" onclick="downloadReport()">Unduh</button>
+            </div>
+          </div>
+
+          <!-- Row to contain the ranking of the best team -->
+          <div class="row mb-4">
+            <div class="col-md-12">
+              <div class="card">
                 <div class="card-header">
-                  <i class="fas fa-trophy"></i>
-                  Top Security Officers
+                  <i class="fas fa-trophy"></i> Top Regu Terbaik
                 </div>
                 <div class="card-body">
                   <table class="table table-striped">
                     <thead>
                       <tr>
-                        <th scope="col">Rank</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Score</th>
+                        <th scope="col">REGU</th>
+                        <th scope="col">NILAI ABSEN</th>
+                        <th scope="col">NILAI JURNAL</th>
+                        <th scope="col">NILAI KUESIONER</th>
+                        <th scope="col">STATUS</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="rankingTable">
                       <tr>
-                        <th scope="row">1</th>
-                        <td>John Doe</td>
-                        <td>98</td>
+                        <td>Regu Satu</td>
+                        <td>83.32</td>
+                        <td>77.84</td>
+                        <td>88.08</td>
+                        <td>Terbaik 1</td>
                       </tr>
                       <tr>
-                        <th scope="row">2</th>
-                        <td>Jane Smith</td>
-                        <td>95</td>
+                        <td>Regu Tiga</td>
+                        <td>83.12</td>
+                        <td>78.96</td>
+                        <td>78.96</td>
+                        <td>Terbaik 2</td>
                       </tr>
                       <tr>
-                        <th scope="row">3</th>
-                        <td>Emily Johnson</td>
-                        <td>93</td>
+                        <td>Regu Dua</td>
+                        <td>68.48</td>
+                        <td>68.00</td>
+                        <td>67.36</td>
+                        <td>Terbaik 3</td>
                       </tr>
-                      <!-- Add more rows as needed -->
                     </tbody>
                   </table>
                 </div>
               </div>
             </div>
-            
-            <!-- Count of Top 3 Officers -->
-            <div class="col-md-4">
-              <div class="card mb-4">
+          </div>
+
+          <!-- Decision Tree Section -->
+          <div class="row mb-4">
+            <div class="col-md-12 text-center">
+              <div class="card">
                 <div class="card-header">
-                  <i class="fas fa-chart-bar"></i>
-                  Top Security Officers Count
+                  <i class="fas fa-chart-line"></i> Decision Tree
                 </div>
-                <div class="card-body text-center">
-                  <h2 class="display-4">3</h2>
+                <div class="card-body">
+                  <img src="{% static 'image/p.png' %}" alt="Decision Tree" class="img-fluid" width="500" height="500" />
                 </div>
               </div>
             </div>
-          </div>
+          </div>          
 
-          <!-- Security Officers Table Section -->
-          <div class="card mb-4">
-            <div class="card-header">
-              <i class="fas fa-users"></i>
-              Security Officers List
-            </div>
-            <div class="card-body">
-              <table class="table table-striped">
+          <!-- Table for Classification Report -->
+          <div class="row mb-4">
+            <div class="col-md-12">
+              <table class="table table-bordered">
                 <thead>
                   <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Position</th>
+                    <th scope="col">Kelas</th>
+                    <th scope="col">Precision</th>
+                    <th scope="col">Recall</th>
+                    <th scope="col">F1-Score</th>
+                    <th scope="col">Support</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <th scope="row">1</th>
-                    <td>John Doe</td>
-                    <td>Chief Security Officer</td>
+                    <td>0</td>
+                    <td>1.00</td>
+                    <td>1.00</td>
+                    <td>1.00</td>
+                    <td>4</td>
                   </tr>
                   <tr>
-                    <th scope="row">2</th>
-                    <td>Jane Smith</td>
-                    <td>Senior Security Officer</td>
+                    <td>1</td>
+                    <td>1.00</td>
+                    <td>1.00</td>
+                    <td>1.00</td>
+                    <td>3</td>
                   </tr>
                   <tr>
-                    <th scope="row">3</th>
-                    <td>Emily Johnson</td>
-                    <td>Security Officer</td>
+                    <td>2</td>
+                    <td>1.00</td>
+                    <td>1.00</td>
+                    <td>1.00</td>
+                    <td>9</td>
                   </tr>
-                  <!-- Add more rows as needed -->
+                  <tr>
+                    <td>3</td>
+                    <td>1.00</td>
+                    <td>1.00</td>
+                    <td>1.00</td>
+                    <td>4</td>
+                  </tr>
+                  <tr>
+                    <th scope="row" colspan="4" class="text-right">Macro Avg</th>
+                    <td>1.00</td>
+                  </tr>
+                  <tr>
+                    <th scope="row" colspan="4" class="text-right">Weighted Avg</th>
+                    <td>1.00</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
           </div>
-          
+
         </div>
       </main>
     </div>
   {% endblock content %}
+
+  <script>
+    function generateReport() {
+      let period = document.getElementById('periodDropdown').value;
+      let year = document.getElementById('yearDropdown').value;
+      // Logic to generate the report based on selected period and year
+      alert('Generate report for ' + period + ' ' + year);
+    }
+
+    function downloadReport() {
+      // Logic to download the report
+      alert('Downloading report...');
+    }
+  </script>
 </body>
 </html>

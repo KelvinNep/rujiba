@@ -6,6 +6,7 @@ $(document).on('click', '.edit-jurnal', function(e) {
 		type: 'GET',
 		url: '/edit_jurnal/' + jurnalId + '/',
 		success: function(data) {
+			$('#edit_nama').val(data.nama);
 			$('#edit_tanggal').val(data.tanggal);
 			$('#edit_skp_tahunan').val(data.skp_tahunan);
 			$('#edit_id_regu').val(data.id_regu);

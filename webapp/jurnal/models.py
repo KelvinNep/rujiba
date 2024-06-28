@@ -1,6 +1,7 @@
 from django.db import models
 
 class Jurnal(models.Model):
+    nama = models.TextField()
     tanggal = models.DateField()
     skp_tahunan = models.CharField(max_length=100)
     id_regu = models.IntegerField() 
@@ -12,7 +13,6 @@ class Jurnal(models.Model):
     nilai = models.FloatField()
     komentar = models.TextField()
     tanggal_isi = models.DateField()
-    # Tambahkan field lampiran jika memang diperlukan
     lampiran = models.FileField(upload_to='lampiran/', null=True, blank=True)
 
     class Meta:

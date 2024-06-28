@@ -39,8 +39,7 @@
                                     <tr>
                                         <th scope="col">No</th>
                                         <th scope="col">NAMA REGU</th>
-                                        <th scope="col">PERTANYAAN 1</th>
-                                        <th scope="col">PERTANYAAN 2</th>
+                                        <th scope="col">POINT REGU</th>
                                         <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
@@ -49,8 +48,7 @@
                                     <tr>
                                         <td>{{ forloop.counter }}</td>
                                         <td>{{ survey.nama }}</td>
-                                        <td>{{ survey.pertanyaan1 }}</td>
-                                        <td>{{ survey.pertanyaan2 }}</td>
+                                        <td>{{ survey.point_regu }}</td>
                                         <td>
                                             <a class="btn btn-primary edit-survey" data-id="{{ survey.id }}" data-bs-toggle="modal" data-bs-target="#editSurveyModal">
                                                 <i class="fas fa-edit"></i>
@@ -113,12 +111,8 @@
                         <input type="text" class="form-control" id="text" name="nama" required>
                     </div>
                     <div class="mb-3">
-                        <label for="pertanyaan1" class="form-label">Pertanyaan 1:</label>
-                        <textarea class="form-control" id="pertanyaan1" name="pertanyaan1" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="pertanyaan2" class="form-label">Pertanyaan 2:</label>
-                        <textarea class="form-control" id="pertanyaan2" name="pertanyaan2" required></textarea>
+                        <label for="point_regu" class="form-label">Point Regu</label>
+                        <input type="number" class="form-control" id="point_regu" name="point_regu" required></input>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -147,12 +141,8 @@
                         <input type="text" class="form-control" id="edit_nama" name="nama" required>
                     </div>
                     <div class="mb-3">
-                        <label for="edit_pertanyaan1" class="form-label">Pertanyaan 1:</label>
-                        <textarea class="form-control" id="edit_pertanyaan1" name="pertanyaan1" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit_pertanyaan2" class="form-label">Pertanyaan 2:</label>
-                        <textarea class="form-control" id="edit_pertanyaan2" name="pertanyaan2" required></textarea>
+                        <label for="edit_point_regu" class="form-label">Point Regu</label>
+                        <input type="number" class="form-control" id="edit_point_regu" name="point_regu" required>
                     </div>
                 </div>
                 <div class="modal-footer">

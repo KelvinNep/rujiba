@@ -30,8 +30,7 @@ def edit_survey(request, id):
     survey_data = {
         'id': survey.id,
         'nama': survey.nama,
-        'pertanyaan1': survey.pertanyaan1,
-        'pertanyaan2': survey.pertanyaan2,
+        'point_regu': survey.point_regu,
     }
     return JsonResponse(survey_data) 
 

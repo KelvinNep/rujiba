@@ -7,8 +7,7 @@ $(document).on('click', '.edit-survey', function(e) {
 		url: '/edit_survey/' + surveyId + '/',
 		success: function(data) {
 			$('#edit_nama').val(data.nama);
-			$('#edit_pertanyaan1').val(data.pertanyaan1);
-			$('#edit_pertanyaan2').val(data.pertanyaan2);
+			$('#edit_point_regu').val(data.point_regu);
 			$('#editSurveyForm').attr('action', '/update_survey/' + surveyId + '/');
 			$('#editSurveyModal').modal('show');
 		},

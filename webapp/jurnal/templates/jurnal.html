@@ -139,54 +139,58 @@
                             <input type="date" class="form-control" id="tanggal" name="tanggal" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="skp_tahunan" class="form-label">SKP Tahunan:</label>
-                            <input type="text" class="form-control" id="skp_tahunan" name="skp_tahunan" required>
+                            <label for="nama" class="form-label">Nama:</label>
+                            <input type="text" class="form-control" id="nama" name="nama" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="id_regu">Select Regu</label>
+                            <label for="skp_tahunan" class="form-label">SKP Tahunan:</label>
+                            <input type="text" class="form-control" id="skp_tahunan" name="skp_tahunan" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_regu" class="form-label">Select Regu:</label>
                             <select class="form-control" id="id_regu" name="id_regu" required>
                                 <option disabled selected>Select Regu</option>
                             </select>
                         </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="jurnal_harian" class="form-label">Jurnal Harian:</label>
                             <input type="text" class="form-control" id="jurnal_harian" name="jurnal_harian" required>
                         </div>
-                    </div>
-                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="jumlah" class="form-label">Jumlah:</label>
                             <input type="number" class="form-control" id="jumlah" name="jumlah" required>
                         </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="satuan" class="form-label">Satuan:</label>
                             <input type="text" class="form-control" id="satuan" name="satuan" required>
                         </div>
-                    </div>
-                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="jam_mulai" class="form-label">Jam Mulai:</label>
                             <input type="time" class="form-control" id="jam_mulai" name="jam_mulai" required>
                         </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="jam_selesai" class="form-label">Jam Selesai:</label>
                             <input type="time" class="form-control" id="jam_selesai" name="jam_selesai" required>
                         </div>
-                    </div>
-                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="lampiran" class="form-label">Lampiran:</label>
                             <input type="file" class="form-control" id="lampiran" name="lampiran" required>
                         </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="nilai" class="form-label">Nilai:</label>
                             <input type="number" class="form-control" id="nilai" name="nilai" required>
                         </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <label for="komentar" class="form-label">Komentar:</label>
                             <textarea class="form-control" id="komentar" name="komentar" rows="3" required></textarea>
                         </div>
@@ -219,49 +223,54 @@
             <form id="editJurnalForm" method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
                     {% csrf_token %}
+                    <input type="hidden" name="id" id="edit_jurnal_id" value="{{ jurnal.id }}">
                     <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="edit_nama" class="form-label">Nama:</label>
+                            <input type="text" class="form-control" id="edit_nama" name="nama" required value="{{ jurnal.nama }}">
+                        </div>
                         <div class="col-md-6">
                             <label for="edit_tanggal" class="form-label">Tanggal:</label>
                             <input type="date" class="form-control" id="edit_tanggal" name="tanggal" required value="{{ jurnal.tanggal }}">
                         </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="edit_skp_tahunan" class="form-label">SKP Tahunan:</label>
                             <input type="text" class="form-control" id="edit_skp_tahunan" name="skp_tahunan" required value="{{ jurnal.skp_tahunan }}">
                         </div>
-                    </div>
-                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="edit_id_regu">Select Regu</label>
                             <select class="form-control" id="edit_id_regu" name="id_regu" required>
                                 <option disabled selected>Select Regu</option>
                             </select>
                         </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="edit_jurnal_harian" class="form-label">Jurnal Harian:</label>
                             <input type="text" class="form-control" id="edit_jurnal_harian" name="jurnal_harian" required value="{{ jurnal.jurnal_harian }}">
                         </div>
-                    </div>
-                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="edit_jumlah" class="form-label">Jumlah:</label>
                             <input type="number" class="form-control" id="edit_jumlah" name="jumlah" required value="{{ jurnal.jumlah }}">
                         </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="edit_satuan" class="form-label">Satuan:</label>
                             <input type="text" class="form-control" id="edit_satuan" name="satuan" required value="{{ jurnal.satuan }}">
                         </div>
-                    </div>
-                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="edit_jam_mulai" class="form-label">Jam Mulai:</label>
                             <input type="time" class="form-control" id="edit_jam_mulai" name="jam_mulai" required value="{{ jurnal.jam_mulai }}">
                         </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="edit_jam_selesai" class="form-label">Jam Selesai:</label>
                             <input type="time" class="form-control" id="edit_jam_selesai" name="jam_selesai" required value="{{ jurnal.jam_selesai }}">
                         </div>
-                    </div>
-                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="edit_lampiran" class="form-label">Lampiran:</label>
                             <input type="file" class="form-control" id="edit_lampiran" name="lampiran">
@@ -269,13 +278,13 @@
                                 <a href="{{ jurnal.lampiran.url }}" target="_blank">Lampiran saat ini</a>
                             {% endif %}
                         </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="edit_nilai" class="form-label">Nilai:</label>
                             <input type="number" class="form-control" id="edit_nilai" name="nilai" required value="{{ jurnal.nilai }}">
                         </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <label for="edit_komentar" class="form-label">Komentar:</label>
                             <textarea class="form-control" id="edit_komentar" name="komentar" rows="3">{{ jurnal.komentar }}</textarea>
                         </div>
@@ -295,6 +304,7 @@
         </div>
     </div>
 </div>
+
 
 <!-- jQuery Modal -->
 <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script> -->
