@@ -9,7 +9,6 @@ from django.views.decorators.cache import never_cache
 from dashboard.forms import CustomAdminLoginForm
 from django.contrib.auth.decorators import login_required
 import pandas as pd
-from django.shortcuts import render
 from .models import Penilaian, HasilPrediksi
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
@@ -67,6 +66,10 @@ def process_data(request):
     labeled_data = Penilaian.objects.all().values()
     labeled_df = pd.DataFrame(labeled_data)
     
+    # Print labeled_df content for debugging
+    print("Labeled Data Frame:")
+    print(labeled_df.head())  # Print first few rows
+    
     # Preprocess the labeled data
     penilaian_columns = ['nilai_absen', 'nilai_jurnal', 'nilai_kuisioner']
     for col in penilaian_columns:
@@ -75,18 +78,30 @@ def process_data(request):
     # Encode the STATUS column
     label_encoder = LabelEncoder()
     labeled_df['status'] = label_encoder.fit_transform(labeled_df['status'])
+    
+    # Split data for training
     X = labeled_df[penilaian_columns]
     y = labeled_df['status']
+    
+    # Impute missing values
     imputer = SimpleImputer(strategy='mean')
     X = imputer.fit_transform(X)
+    
+    # Split data into training and testing sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    # Define parameter grid for GridSearchCV
     param_grid = {
         'n_estimators': [50, 100, 200],
         'max_depth': [None, 5, 10, 15],
         'min_samples_split': [2, 5, 10],
         'min_samples_leaf': [1, 2, 4]
     }
+    
+    # Initialize RandomForestClassifier model
     model = RandomForestClassifier()
+    
+    # Perform GridSearchCV
     grid_search = GridSearchCV(model, param_grid, cv=5, scoring='accuracy')
     grid_search.fit(X_train, y_train)
     best_model = grid_search.best_estimator_
@@ -94,25 +109,29 @@ def process_data(request):
     # Load the new data for prediction from the database
     new_data = Penilaian.objects.all().values()
     new_df = pd.DataFrame(new_data)
+    
+    # Preprocess the new data for prediction
     for col in penilaian_columns:
         new_df[col] = pd.to_numeric(new_df[col], errors='coerce')
-    X_new = new_df[penilaian_columns]
-    X_new = imputer.transform(X_new)
+    
+    # Impute missing values for prediction
+    X_new = imputer.transform(new_df[penilaian_columns])
 
-    # Predict
+    # Predict using the best model
     y_pred = best_model.predict(X_new)
     new_df['predicted_status'] = label_encoder.inverse_transform(y_pred)
 
-    # Save the predictions to the database
+    # Save predictions to HasilPrediksi model
     HasilPrediksi.objects.all().delete()  # Clear previous predictions
+    predictions_to_save = []
     for index, row in new_df.iterrows():
-        HasilPrediksi.objects.create(
+        prediction = HasilPrediksi(
             regu=row['regu'],
-            nilai_absen=row['nilai_absen'],
-            nilai_jurnal=row['nilai_jurnal'],
-            nilai_kuisioner=row['nilai_kuisioner'],
-            status=row['predicted_status']
+            penilaian=Penilaian.objects.get(regu=row['regu']),  # Ensure to fetch correct Penilaian instance
+            predicted_status=row['predicted_status']
         )
+        predictions_to_save.append(prediction)
+    HasilPrediksi.objects.bulk_create(predictions_to_save)
 
     # Display results
     result_html = new_df.to_html()

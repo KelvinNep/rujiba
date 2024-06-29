@@ -1,10 +1,10 @@
 $(document).ready(function() {
-    console.log('11111')
     // Mendapatkan token CSRF dari meta tag
+    console.log('ppp')
     var csrfToken = $('meta[name="csrf-token"]').attr('content');
     
     // Menangani klik tombol dengan class .btngenerate
-    $('.btngenerate').click(function(e) {
+    $(document).on('click', '.btngenerate', function(e) {
         e.preventDefault();
         
         // Mengambil nilai periode dan tahun dari dropdown
@@ -105,5 +105,4 @@ $(document).ready(function() {
             tableBody.append(tr);
         });
     }
-  });
-  
+});
