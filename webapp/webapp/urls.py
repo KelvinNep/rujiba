@@ -13,6 +13,7 @@ from dashboard.views import custom_permission_denied_view
 # URL patterns
 urlpatterns = [
     path('dashboard/', dashboard_views.dashboard, name='dashboard'),
+    path('process-data/', dashboard_views.process_data, name='process_data'),
     path('survey/', survey_views.survey, name='survey'),
     path('jurnal/', jurnal_views.jurnal, name='jurnal'),  
     path('rekapulasi/', rekapulasi_views.rekapulasi, name='rekapulasi'), 
