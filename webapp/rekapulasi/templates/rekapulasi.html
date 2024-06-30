@@ -134,7 +134,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="addRekapForm" action="{% url 'add_rekap' %}" method="POST" novalidate>
+                <form id="addRekapForm" action="{% url 'add_rekap' %}" method="POST">
                     {% csrf_token %}
                     <div class="row g-3">
                         <div class="col-md-6">
@@ -160,7 +160,7 @@
                         <div class="col-md-6">
                             <label for="id_regu">Select Regu</label>
                             <select class="form-control" id="id_regu" name="id_regu" required>
-                                
+                                <!-- Option values should be populated dynamically -->
                             </select>
                         </div>
                     </div>
@@ -263,6 +263,7 @@
         </div>
     </div>
 </div>
+
 
 
 <!-- Modal Edit Rekapulasi -->

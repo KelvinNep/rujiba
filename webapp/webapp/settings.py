@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rekapulasi',
     'logout',
     'survey',
+    'webapp',
 ]
 
 MIDDLEWARE = [

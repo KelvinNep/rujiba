@@ -1,5 +1,6 @@
 {% extends "navbar.html" %}
 {% load static %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +16,6 @@
     <meta name="csrf-token" content="{{ csrf_token }}">
 </head>
 <body class="sb-nav-fixed">
-  {% block content %}
     <div id="layoutSidenav_content">
       <main>
         <div class="container-fluid px-4">
@@ -27,7 +27,7 @@
           <!-- Row for Generate Button, Period Dropdown, and Year Dropdown -->
           <div class="row mb-4">
             <div class="col-md-2">
-              <button class="btn btn-primary btngenerate">Generate Periode</button>
+              <button class="btn btn-primary proses-data">Generate Periode</button>
             </div>
             <div class="col-md-4">
               <select class="form-control" id="periodDropdown">
@@ -121,24 +121,12 @@
         </div>
       </main>
     </div>
-  {% endblock content %}
 
-  <script src="{% static 'js/jquery.min.js' %}"></script>
 
-  <!-- Static File -->
-  <script src="{% static 'js/process_data.js' %}"></script>
-  <!-- Bootstrap JS -->
-  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-  <!-- jQuery -->
-  <script src="{% static 'js/jquerycdn.js' %}"></script>
-  <script src="{% static 'js/jquery.min.js' %}"></script>
-  <!-- Sweet Alert -->
-  <script src="{% static 'js/sweetalert2.js' %}"></script>
-  <!-- DataTables JS -->
-  <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
-  <script src="{% static 'js/dataTables.bootstrap5.min.js' %}"></script>
-  <!-- DataTabels JS Customize -->
-  <script src="{% static 'js/dataTables.bootstrap5.min.js' %}"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="{% static 'js/proses-data.js' %}"></script>
 
 </body>
 </html>
+{% endblock content %}
